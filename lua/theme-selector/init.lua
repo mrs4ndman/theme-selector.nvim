@@ -5,7 +5,9 @@ local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
 local sorters = require "telescope.sorters"
 
-function enter(prompt_bufnr)
+local M = {}
+
+local function enter(prompt_bufnr)
 	local selected = action_state.get_selected_entry()
 	-- print(vim.inspect(selected))
 	local cmd = 'colorscheme ' .. selected[1]
@@ -13,22 +15,21 @@ function enter(prompt_bufnr)
 	actions.close(prompt_bufnr)
 end
 
-function next_color(prompt_bufnr)
+local function next_color(prompt_bufnr)
 	actions.move_selection_next(prompt_bufnr)
 	local selected = action_state.get_selected_entry()
 	local cmd = 'colorscheme ' .. selected[1]
 	vim.cmd(cmd)
 end
 
-function prev_color(prompt_bufnr)
+local function prev_color(prompt_bufnr)
 	actions.move_selection_previous(prompt_bufnr)
 	local selected = action_state.get_selected_entry()
 	local cmd = 'colorscheme ' .. selected[1]
 	vim.cmd(cmd)
 end
 
-local opts = {
-	-- TODO: Optimise the sorting and make it more responsive
+M.default_opts = {
 	prompt_title = "Which color?",
 	layout_strategy = "vertical",
 	layout_config = {
@@ -37,29 +38,7 @@ local opts = {
 		prompt_position = "top",
 	},
 	sorting_strategy = "ascending",
-	finder = finders.new_table {
-		"rose-pine",
-		"catppuccin",
-		"onedark_dark",
-		"tokyonight",
-		"oxocarbon",
-		"vscode",
-		"doom-one",
-		"github_dark_high_contrast",
-		"tokyodark",
-		"carbonfox",
-		"material",
-		"gruber-darker",
-		"fluoromachine",
-		"nord",
-		"nordic",
-		"dracula",
-		"onenord",
-		"nightfox",
-		"nordfox",
-		"neon",
-		"tokyonight-moon"
-	},
+	finder = finders.new_table {},
 	sorter = sorters.get_generic_fuzzy_sorter({}),
 	attach_mappings = function(prompt_bufnr, map)
 		map("i", "<CR>", enter)
@@ -69,11 +48,16 @@ local opts = {
 	end,
 }
 
-local colors = pickers.new(opts)
+
+
+M.setup = function(user_opts)
+	M.config = vim.tbl_deep_extend("force", M.default_opts, user_opts or {})
+end
 
 -- function colorizer()
 -- 	colors:find()
 -- end
+local colors = pickers.new(M.setup)
 
 vim.api.nvim_create_user_command("ThemerTest", function()
 	colors:find()

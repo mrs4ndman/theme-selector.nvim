@@ -1,1 +1,1 @@
-# themer.nvim - Simple theme selector plugin
+# theme-selector.nvim - Simple theme selector plugin
