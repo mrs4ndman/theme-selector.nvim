@@ -48,17 +48,16 @@ M.default_opts = {
 	end,
 }
 
-
-
-M.setup = function(user_opts)
-	M.config = vim.tbl_deep_extend("force", M.default_opts, user_opts or {})
-end
-
 -- function colorizer()
 -- 	colors:find()
 -- end
 local colors = pickers.new(M.setup)
 
-vim.api.nvim_create_user_command("ThemerTest", function()
-	colors:find()
-end, {})
+M.setup = function(user_opts)
+	M.config = vim.tbl_deep_extend("force", M.default_opts, user_opts or {})
+	vim.api.nvim_create_user_command("ThemerTest", function()
+		colors:find()
+	end, {})
+end
+
+return M
