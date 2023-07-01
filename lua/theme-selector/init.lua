@@ -38,7 +38,7 @@ M.default_opts = {
 		prompt_position = "top",
 	},
 	sorting_strategy = "ascending",
-	finder = finders.new_table {},
+	finder = finders.new_table {""},
 	sorter = sorters.get_generic_fuzzy_sorter({}),
 	attach_mappings = function(prompt_bufnr, map)
 		map("i", "<CR>", enter)
@@ -51,10 +51,9 @@ M.default_opts = {
 -- function colorizer()
 -- 	colors:find()
 -- end
-local colors = pickers.new(M.setup)
-
 M.setup = function(user_opts)
 	M.config = vim.tbl_deep_extend("force", M.default_opts, user_opts or {})
+	local colors = pickers.new(M.setup)
 	vim.api.nvim_create_user_command("ThemerTest", function()
 		colors:find()
 	end, {})
