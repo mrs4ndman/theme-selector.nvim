@@ -10,7 +10,7 @@ local M = {}
 local function enter(prompt_bufnr)
 	local selected = action_state.get_selected_entry()
 	-- print(vim.inspect(selected))
-	local cmd = 'colorscheme ' .. selected[1]
+	local cmd = "colorscheme " .. selected[1]
 	vim.cmd(cmd)
 	actions.close(prompt_bufnr)
 end
@@ -18,14 +18,14 @@ end
 local function next_color(prompt_bufnr)
 	actions.move_selection_next(prompt_bufnr)
 	local selected = action_state.get_selected_entry()
-	local cmd = 'colorscheme ' .. selected[1]
+	local cmd = "colorscheme " .. selected[1]
 	vim.cmd(cmd)
 end
 
 local function prev_color(prompt_bufnr)
 	actions.move_selection_previous(prompt_bufnr)
 	local selected = action_state.get_selected_entry()
-	local cmd = 'colorscheme ' .. selected[1]
+	local cmd = "colorscheme " .. selected[1]
 	vim.cmd(cmd)
 end
 
@@ -38,7 +38,7 @@ M.default_opts = {
 		prompt_position = "top",
 	},
 	sorting_strategy = "ascending",
-	finder = finders.new_table {""},
+	finder = finders.new_table { "" },
 	sorter = sorters.get_generic_fuzzy_sorter({}),
 	attach_mappings = function(prompt_bufnr, map)
 		map("i", "<CR>", enter)
