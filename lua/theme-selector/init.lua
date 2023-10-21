@@ -5,7 +5,27 @@ local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local sorters = require("telescope.sorters")
 
-local M = {}
+local setup = {}
+
+local colorschemes = "habamax" or setup.user_opts
+---Creates the default picker options from the provided
+---options. If the `theme` field with a string value is added,
+---the system theme identified by that value is added to the options
+---@param opts table
+setup.setup = function(opts)
+  errors = {}
+  if type(opts) ~= "table" then
+    local msg = "The list of colorschemes must be a table"
+    table.insert(errors, msg)
+    vim.notify(msg)
+  end
+  setup.config = vim.tbl_deep_extend("force", setup.default_opts, user_opts or {})
+end
+
+vim.api.nvim_create_user_command("ThemerTest", function()
+  local colors = pickers.new(setup.setup)
+  colors:find()
+end, {})
 
 local function enter(prompt_bufnr)
   local selected = action_state.get_selected_entry()
@@ -29,7 +49,7 @@ local function prev_color(prompt_bufnr)
   vim.cmd(cmd)
 end
 
-M.default_opts = {
+setup.default_opts = {
   prompt_title = "Which color?",
   layout_strategy = "vertical",
   layout_config = {
@@ -38,7 +58,7 @@ M.default_opts = {
     prompt_position = "top",
   },
   sorting_strategy = "ascending",
-  finder = finders.new_table({ "" }),
+  finder = finders.new_table(colorschemes),
   sorter = sorters.get_generic_fuzzy_sorter({}),
   attach_mappings = function(prompt_bufnr, map)
     map("i", "<CR>", enter)
@@ -48,15 +68,4 @@ M.default_opts = {
   end,
 }
 
--- function colorizer()
--- 	colors:find()
--- end
-M.setup = function(user_opts)
-  M.config = vim.tbl_deep_extend("force", M.default_opts, user_opts or {})
-  local colors = pickers.new(M.setup)
-  vim.api.nvim_create_user_command("ThemerTest", function()
-    colors:find()
-  end, {})
-end
-
-return M
+return setup
