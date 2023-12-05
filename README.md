@@ -42,6 +42,10 @@ return {
 ```
 <br>
 
+### How it looks
+
+![Example image](assets/example.png)
+
 ### To-do / known issues
 - [x] User-defined list
 - [ ] User-configurable keybinds (it has defaults now, but no merging)
