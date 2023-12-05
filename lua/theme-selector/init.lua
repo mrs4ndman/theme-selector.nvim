@@ -31,14 +31,14 @@ local function prev_color(prompt_bufnr)
   vim.cmd(cmd)
 end
 
-if vim.tbl_isempty(colorschemes.userlist) then
+if vim.tbl_isempty(colorschemes.list) then
   M.colorschemes = {
     "default",
     "habamax",
     "retrobox",
   }
 else
-  M.colorschemes = colorschemes.userlist
+  M.colorschemes = colorschemes.list
 end
 
 local color_opts = {

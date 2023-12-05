@@ -1,5 +1,5 @@
 local M = {}
 
-M.userlist = {}
+M.list = {}
 
 return M
