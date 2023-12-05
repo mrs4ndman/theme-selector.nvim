@@ -1,35 +1,17 @@
--- COLORIZER
+local M = {}
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local sorters = require("telescope.sorters")
+local colorschemes = require("theme-selector.colorschemes")
 
-local setup = {}
-
-local colorschemes = "habamax" or setup.user_opts
----Creates the default picker options from the provided
----options. If the `theme` field with a string value is added,
----the system theme identified by that value is added to the options
----@param opts table
-setup.setup = function(opts)
-  errors = {}
-  if type(opts) ~= "table" then
-    local msg = "The list of colorschemes must be a table"
-    table.insert(errors, msg)
-    vim.notify(msg)
-  end
-  setup.config = vim.tbl_deep_extend("force", setup.default_opts, user_opts or {})
+local function on_escape(prompt_bufnr)
+  actions.close(prompt_bufnr)
 end
-
-vim.api.nvim_create_user_command("ThemerTest", function()
-  local colors = pickers.new(setup.setup)
-  colors:find()
-end, {})
 
 local function enter(prompt_bufnr)
   local selected = action_state.get_selected_entry()
-  -- print(vim.inspect(selected))
   local cmd = "colorscheme " .. selected[1]
   vim.cmd(cmd)
   actions.close(prompt_bufnr)
@@ -49,7 +31,17 @@ local function prev_color(prompt_bufnr)
   vim.cmd(cmd)
 end
 
-setup.default_opts = {
+if vim.tbl_isempty(colorschemes.userlist) then
+  M.colorschemes = {
+    "default",
+    "habamax",
+    "retrobox",
+  }
+else
+  M.colorschemes = colorschemes.userlist
+end
+
+local color_opts = {
   prompt_title = "Which color?",
   layout_strategy = "vertical",
   layout_config = {
@@ -58,9 +50,13 @@ setup.default_opts = {
     prompt_position = "top",
   },
   sorting_strategy = "ascending",
-  finder = finders.new_table(colorschemes),
+  finder = finders.new_table(M.colorschemes),
   sorter = sorters.get_generic_fuzzy_sorter({}),
+  ---@diagnostic disable-next-line: unused-local
   attach_mappings = function(prompt_bufnr, map)
+    local escape = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
+    map("i", escape, on_escape)
+    map("i", "<C-c>", on_escape)
     map("i", "<CR>", enter)
     map("i", "<C-k>", prev_color)
     map("i", "<C-j>", next_color)
@@ -68,4 +64,10 @@ setup.default_opts = {
   end,
 }
 
-return setup
+local colors = pickers.new(color_opts)
+
+vim.api.nvim_create_user_command("Themer", function()
+  colors:find()
+end, {})
+
+return M
